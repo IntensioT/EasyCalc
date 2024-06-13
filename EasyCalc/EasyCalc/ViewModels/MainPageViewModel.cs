@@ -60,7 +60,7 @@ namespace EasyCalc
             }
         }
 
-        private void EvaluateExpression()
+        public void EvaluateExpression()
         {
             try
             {

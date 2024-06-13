@@ -8,5 +8,9 @@
             BindingContext = viewModel;
         }
 
+        private void Entry_Completed(object sender, EventArgs e)
+        {
+            ((MainPageViewModel)BindingContext).EvaluateExpression();
+        }
     }
 }

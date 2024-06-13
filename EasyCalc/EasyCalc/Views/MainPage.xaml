@@ -52,7 +52,8 @@
             <VerticalStackLayout>
                 <Entry Text="{Binding ExpressionDisplay}"
                        HorizontalTextAlignment="End"
-                       FontSize="75"/>
+                       FontSize="75"
+                       Completed="Entry_Completed"/>
                 <Label Text="{Binding ResultDisplay}"
                        HorizontalTextAlignment="End"
                        FontSize="50"/>
@@ -166,6 +167,7 @@
 
             <Button Grid.Row="4"
                     Grid.Column="2"
+                    FontSize="28"
                     Style="{StaticResource NumberButtonStyle}"
                     Text="DEL"/>
 
@@ -173,7 +175,8 @@
                     Grid.Column="3"
                     BackgroundColor="{AppThemeBinding Light={StaticResource CustomLightBrass}, Dark={StaticResource CustomDarkBrass}}"
                     Style="{StaticResource OperatorButtonStyle}"
-                    Text="="/>
+                    Text="="
+                    />
 
             
         </Grid>
