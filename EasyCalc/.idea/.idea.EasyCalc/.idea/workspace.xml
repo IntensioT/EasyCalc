@@ -11,10 +11,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eedfc521-2b15-46c6-848e-da6b65c61792" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/VariableParsingLibrary/Tools/InfixToPostfixConverter.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/VariableParsingLibrary/Tools/Tokenizer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/VariableParsingLibrary/VariableParser.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCalc.sln" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCalc.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCalc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCalc/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VariableParsingLibrary/Tools/InfixToPostfixConverter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/VariableParsingLibrary/Tools/InfixToPostfixConverter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VariableParsingLibrary/Tools/Tokenizer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/VariableParsingLibrary/Tools/Tokenizer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VariableParsingLibrary/VariableParser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/VariableParsingLibrary/VariableParser.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +102,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1718298450252</updated>
-      <workItem from="1718298451762" duration="2793000" />
+      <workItem from="1718298451762" duration="4192000" />
     </task>
     <servers />
   </component>

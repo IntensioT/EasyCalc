@@ -63,7 +63,7 @@ public class VariableParser
 
         foreach (var token in postfixTokens)
         {
-            if (double.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out var number))
+            if (double.TryParse(token, NumberStyles.Float | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out var number))
             {
                 stack.Push(number);
             }

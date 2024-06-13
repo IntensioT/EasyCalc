@@ -6,35 +6,49 @@ public class Tokenizer
     {
         var tokens = new List<string>();
         var currentToken = string.Empty;
+        bool isInExponent = false;
 
         for (int i = 0; i < expression.Length; i++)
         {
             var ch = expression[i];
-            if (char.IsLetterOrDigit(ch) || ch == '.')
+
+            if (char.IsLetterOrDigit(ch) || ch == '.' || (isInExponent && (ch == '+' || ch == '-')))
             {
-                if (char.IsLetter(ch) && currentToken.Length > 0 && char.IsDigit(currentToken[currentToken.Length - 1]))
+                if (char.IsLetter(ch))
+                {
+                    if (ch == 'e' || ch == 'E')
+                    {
+                        isInExponent = true;
+                    }
+                    else if (currentToken.Length > 0 && char.IsDigit(currentToken[currentToken.Length - 1]))
+                    {
+                        tokens.Add(currentToken);
+                        currentToken = string.Empty;
+                    }
+                }
+                currentToken += ch;
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(currentToken))
                 {
                     tokens.Add(currentToken);
                     currentToken = string.Empty;
                 }
 
-                currentToken += ch;
+                if (!char.IsWhiteSpace(ch))
+                {
+                    tokens.Add(ch.ToString());
+                }
+                isInExponent = false;
             }
-            else if (i < expression.Length - 1 && char.IsDigit(ch) && char.IsLetter(expression[i + 1]))
+
+            if (i < expression.Length - 1 && char.IsDigit(ch) && char.IsLetter(expression[i + 1]) && expression[i + 1] != 'e' && expression[i + 1] != 'E')
             {
                 tokens.Add(currentToken);
                 tokens.Add("*");
-
                 currentToken = string.Empty;
-            }
-            else if (!string.IsNullOrEmpty(currentToken))
-            {
-                tokens.Add(currentToken);
-                currentToken = string.Empty;
-            }
-            else if (!char.IsWhiteSpace(ch))
-            {
-                tokens.Add(ch.ToString());
+                isInExponent = false;
             }
         }
 

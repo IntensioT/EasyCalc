@@ -19,7 +19,7 @@ public class InfixToPostfixConverter
 
         foreach (var token in infixTokens)
         {
-            if (double.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out _) || token.All(char.IsLetter))
+            if (double.TryParse(token, NumberStyles.Float | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out _) || token.All(char.IsLetter))
             {
                 output.Add(token);
             }
