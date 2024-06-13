@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCalc", "EasyCalc\EasyCalc.csproj", "{77764FB3-31D8-4A33-B049-322C1D532189}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCalc", "EasyCalc\EasyCalc.csproj", "{77764FB3-31D8-4A33-B049-322C1D532189}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCalc.Tests", "EasyCalc.Tests\EasyCalc.Tests.csproj", "{B374FCCF-77DD-4692-8FC6-A7D7D7DF2C2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionComposeLibrary", "FunctionComposeLibrary\FunctionComposeLibrary.csproj", "{6A605255-5756-4C93-B88D-DA49D7D0C198}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +21,14 @@ Global
 		{77764FB3-31D8-4A33-B049-322C1D532189}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77764FB3-31D8-4A33-B049-322C1D532189}.Release|Any CPU.Build.0 = Release|Any CPU
 		{77764FB3-31D8-4A33-B049-322C1D532189}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B374FCCF-77DD-4692-8FC6-A7D7D7DF2C2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B374FCCF-77DD-4692-8FC6-A7D7D7DF2C2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B374FCCF-77DD-4692-8FC6-A7D7D7DF2C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B374FCCF-77DD-4692-8FC6-A7D7D7DF2C2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A605255-5756-4C93-B88D-DA49D7D0C198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A605255-5756-4C93-B88D-DA49D7D0C198}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A605255-5756-4C93-B88D-DA49D7D0C198}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A605255-5756-4C93-B88D-DA49D7D0C198}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
