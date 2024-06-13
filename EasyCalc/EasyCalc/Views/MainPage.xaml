@@ -20,6 +20,10 @@
                     Value="32"/>
             <Setter Property="FontAttributes"
                     Value="Bold"/>
+            <Setter Property="Command"
+                    Value="{Binding HandleButtonPressCommand}"/>
+            <Setter Property="CommandParameter"
+                    Value="{Binding Source={RelativeSource Self}, Path=Text}"/>
         </Style>
 
         <Style x:Key="NumberButtonStyle"
@@ -163,7 +167,7 @@
             <Button Grid.Row="4"
                     Grid.Column="2"
                     Style="{StaticResource NumberButtonStyle}"
-                    Text="DE"/>
+                    Text="DEL"/>
 
             <Button Grid.Row="4"
                     Grid.Column="3"
