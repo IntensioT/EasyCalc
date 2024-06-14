@@ -151,13 +151,12 @@ namespace EasyCalc.Tests
         }
 
         [Fact]
-        public void CreateFunctionAndSendArrayOfParamsToDynamicInvoke()
+        public void CreateFunctionWithNoParameters()
         {
-            var parameters = new List<double> { 1, 2, 3 };
-            var expected = (parameters[0] + 3) / (parameters[1] + 5 * (3 - parameters[2]));
-            var function = _composer.CreateFunction("f(x,y,z)", $"(x + 3) / (y + 5 * (3 - z))");
+            var expected = 10;
+            var function = _composer.CreateFunction("f()", $"(10 + 2 - (1 + 1))");
 
-            var actual = function?.DynamicInvoke(parameters.ToArray());
+            var actual = _composer.CallFunction("f", new double[] { });
 
             Assert.NotNull(function);
             Assert.Equal(expected, actual);

@@ -20,6 +20,16 @@ namespace FunctionComposeLibrary
         IEnumerable<char> operations => operationsDictionary.Keys;
         const char _divider = ',';
 
+        public double CallFunction(string name, double[] args)
+        {
+            _functions.TryGetValue(GetFunctionName(name), out var function);
+            if (function == null)
+                return 0;
+
+            var result = function.DynamicInvoke(args);
+            return result != null ? (double)result : 0;
+        }
+
         public Delegate? GetFunction(string name)
         {
             _functions.TryGetValue(GetFunctionName(name), out var result);
@@ -33,7 +43,7 @@ namespace FunctionComposeLibrary
             if (result != null)
                 return result;
 
-            string[] parameters = GetSignatureParameters(signature);
+            var parameters = GetSignatureParameters(signature);
             var args = Expression.Parameter(typeof(double[]), "args");
 
             body = ParseToPostfixForm(body);
@@ -57,7 +67,7 @@ namespace FunctionComposeLibrary
                     {
                         stack.Push(Expression.Constant(variable, variable.GetType()));
                     }
-                    else if (parameters.Contains(strVariable))
+                    else if (parameters?.Contains(strVariable) ?? false)
                     {
                         int ind = 0;
                         while (parameters[ind] != strVariable) ind++;
@@ -124,16 +134,13 @@ namespace FunctionComposeLibrary
             return output.ToString();
         }
 
-        private string[] GetSignatureParameters(string signature)
+        private string[]? GetSignatureParameters(string signature)
         {
             signature = signature.Replace(" ", "");
             var startInd = signature.IndexOf("(") + 1;
             var endInd = signature.IndexOf(")");
             signature = signature.Substring(startInd, endInd - startInd);
             var result = signature.Split(',');
-            //TODO: might be case when function has no parameters, need to solve it later
-            if (result == null)
-                throw new FunctionComposerException("Signature has no parameters");
             return result;
         }
 
@@ -141,8 +148,8 @@ namespace FunctionComposeLibrary
         {
             signature = signature.Replace(" ", "");
             var length = signature.IndexOf("(");
-            return length > 0 
-                ? signature.Substring(0, signature.IndexOf("(")) 
+            return length > 0
+                ? signature.Substring(0, signature.IndexOf("("))
                 : signature;
         }
     }
