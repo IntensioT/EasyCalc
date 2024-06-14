@@ -6,8 +6,6 @@ namespace FunctionComposeLibrary
 {
     public class FunctionComposer
     {
-        Dictionary<string, Delegate> _functions = new();
-
         private Dictionary<char, Operation> operationsDictionary = new()
         {
             ['('] = new Operation(null, 0),
@@ -20,46 +18,12 @@ namespace FunctionComposeLibrary
         IEnumerable<char> operations => operationsDictionary.Keys;
         const char _divider = ',';
 
-        public double CallFunction(string name, double[] args)
-        {
-            _functions.TryGetValue(GetFunctionName(name), out var function);
-            if (function == null)
-                return 0;
-
-            var result = 0d;
-            try
-            {
-                var functionResult = function.DynamicInvoke(args);
-                result = functionResult != null ? (double)functionResult : 0;
-            }
-            catch (DivideByZeroException ex)
-            {
-                throw new FunctionComposerException($"Attempt to divide by zero in function: {name}", ex);
-            }
-            catch
-            {
-                throw new FunctionComposerException($"Unable to run funciton: {name}. Try to check its body and your params one more time");
-            }
-            return result;
-        }
-
-        public Delegate? GetFunction(string name)
-        {
-            _functions.TryGetValue(GetFunctionName(name), out var result);
-            return result;
-        }
-
         public Delegate? CreateFunction(string signature, string body)
         {
-            var name = GetFunctionName(signature);
-            var result = GetFunction(name);
-            if (result != null)
-                return result;
-
             var parameters = GetSignatureParameters(signature);
+            body = ParseToPostfixForm(body);
             var args = Expression.Parameter(typeof(double[]), "args");
 
-            body = ParseToPostfixForm(body);
             var stack = new Stack<Expression>();
             for (int i = 0; i < body.Length; i++)
             {
@@ -94,8 +58,7 @@ namespace FunctionComposeLibrary
                 }
             }
 
-            result = Expression.Lambda(stack.Pop(), args).Compile();
-            _functions.Add(name, result);
+            var result = Expression.Lambda(stack.Pop(), args).Compile();
             return result;
         }
 
@@ -156,13 +119,6 @@ namespace FunctionComposeLibrary
             return result;
         }
 
-        private string GetFunctionName(string signature)
-        {
-            signature = signature.Replace(" ", "");
-            var length = signature.IndexOf("(");
-            return length > 0
-                ? signature.Substring(0, signature.IndexOf("("))
-                : signature;
-        }
+        
     }
 }

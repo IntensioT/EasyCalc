@@ -66,18 +66,6 @@ namespace EasyCalc.Tests
             Assert.Equal(expected, actual);
         }
 
-        [Fact]
-        public void GetFunctionName_SimpleSignatureWithExtraSpaces_GetNameOfFunction()
-        {
-            var method = _composer.GetType().GetMethod("GetFunctionName", BindingFlags.NonPublic | BindingFlags.Instance);
-            var expected = "func";
-
-            var actual = method?.Invoke(_composer, new[] { "func( x, y )" });
-
-            Assert.NotNull(method);
-            Assert.Equal(expected, actual);
-        }
-
         [Theory]
         [InlineData(2, 4)]
         [InlineData(2.4, 4.1)]
@@ -135,28 +123,14 @@ namespace EasyCalc.Tests
             Assert.NotNull(function);
             Assert.Equal(expected, actual);
         }
-        [Fact]
-        public void GetFunction_GetFunctionFromComposerCollectionOfFunctions_GetAndCalculateExpression()
-        {
-            var method = _composer.CreateFunction("f(x,y)", $"x * x + y - 5");
-            var savedMethod = _composer.GetFunction("f");
-            int x = 2, y = 3;
-            double expected = x * x + y - 5;
-
-            var actual = savedMethod?.DynamicInvoke(new double[] { x, y });
-
-            Assert.NotNull(method);
-            Assert.NotNull(savedMethod);
-            Assert.Equal(expected, actual);
-        }
 
         [Fact]
         public void CreateFunction_NoParametersInSignature_CreateAndCalculateExpression()
         {
-            var expected = 10;
+            var expected = 10d;
             var function = _composer.CreateFunction("f()", $"(10 + 2 - (1 + 1))");
 
-            var actual = _composer.CallFunction("f", new double[] { });
+            var actual = function?.DynamicInvoke(new double[] { });
 
             Assert.NotNull(function);
             Assert.Equal(expected, actual);

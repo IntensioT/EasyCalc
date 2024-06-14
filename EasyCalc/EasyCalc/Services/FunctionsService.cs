@@ -13,24 +13,31 @@ namespace EasyCalc.Services
     public class FunctionsService
     {
         FunctionComposer _composer;
+        Dictionary<long, Delegate> _cachedFunctions = new();
 
         public FunctionsService()
         {
             _composer = new FunctionComposer();
         }
 
+
         public Delegate? CreateFunction(string text)
         {
+            if(_cachedFunctions.ContainsKey(text.GetHashCode()))
+                return _cachedFunctions[text.GetHashCode()];
+
             var args = text.Split('=');
             if (args.Length != 2)
                 throw new FunctionComposerException($"Incorrect function string: {text}");
 
-            Delegate? result = null;
+            Delegate? result;
             try
             {
                 var signature = EnsureValidSignature(args[0]);
                 var body = EnsureValidBody(args[1]);
                 result = _composer.CreateFunction(signature, body);
+                if(result != null)
+                    _cachedFunctions.Add(text.GetHashCode(), result);
             }
             catch (FunctionComposerException)
             {
@@ -43,16 +50,38 @@ namespace EasyCalc.Services
             return result;
         }
 
-        public double CallFunction(string name, double[] args)
+        public double CallFunction(string text, double[] args)
         {
+            _cachedFunctions.TryGetValue(text.GetHashCode(), out var function);
+            if (function == null)
+                return 0;
+
+            double result;
             try
             {
-                return _composer.CallFunction(name, args);
+                var functionResult = function.DynamicInvoke(args);
+                result = functionResult != null ? (double)functionResult : 0;
             }
-            catch (FunctionComposerException)
+            catch (DivideByZeroException ex)
             {
-                throw;
+                throw new FunctionComposerException($"Attempt to divide by zero in function: {text}", ex);
             }
+            catch
+            {
+                throw new FunctionComposerException($"Unable to run funciton: {text}. Try to check its body and your params one more time");
+            }
+            return result;
+        }
+
+        public Delegate? GetFunction(string text)
+        {
+            _cachedFunctions.TryGetValue(text.GetHashCode(), out var result);
+            return result;
+        }
+
+        public bool DeleteFunction(string text)
+        {
+            return _cachedFunctions.Remove(text.GetHashCode());
         }
 
         private bool CheckSignatureValidation(string signature)
@@ -72,7 +101,7 @@ namespace EasyCalc.Services
                         throw new FunctionComposerException($"Incorrect function signature {signature}");
                 }
             }
-            return signature;
+            return signature.Replace(" ", "");
         }
 
         private string EnsureValidBody(string body)
@@ -82,7 +111,7 @@ namespace EasyCalc.Services
             int missedBracketsAmount = CountMissedBrackets(body);
             for (int i = 0; i < missedBracketsAmount; i++)
                 body += ')';
-            return body;
+            return body.Replace(" ", "");
         }
 
         private int CountMissedBrackets(string body)
