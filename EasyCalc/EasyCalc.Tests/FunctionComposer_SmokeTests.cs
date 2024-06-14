@@ -15,7 +15,7 @@ namespace EasyCalc.Tests
         }
 
         [Fact]
-        public void CheckSignatureDivisionToParameters()
+        public void GetSignatureParameters_FunctionWith2Parameters_CreateCollectionOfParameters()
         {
             var method = _composer.GetType().GetMethod("GetSignatureParameters", BindingFlags.NonPublic | BindingFlags.Instance);
             var expected = new string[] { "x", "y" };
@@ -26,7 +26,7 @@ namespace EasyCalc.Tests
             Assert.Equal(expected, actual);
         }
         [Fact]
-        public void CheckSignatureWithSpacesDivisionToParameters()
+        public void GetSignatureParameters_FunctionWithExtraSymbols_CreateCollectionOfParameters()
         {
             var method = _composer.GetType().GetMethod("GetSignatureParameters", BindingFlags.NonPublic | BindingFlags.Instance);
             var expected = new string[] { "x", "y" };
@@ -37,7 +37,7 @@ namespace EasyCalc.Tests
             Assert.Equal(expected, actual);
         }
         [Fact]
-        public void ParseFunctionBodyToPostfixForm()
+        public void ParseToPostfixForm_ParseExampleWithAllOperations_CreatePostfixForm()
         {
             var method = _composer.GetType().GetMethod("ParseToPostfixForm", BindingFlags.NonPublic | BindingFlags.Instance);
             var dividerField = _composer.GetType().GetField("_divider", BindingFlags.NonPublic | BindingFlags.Static);
@@ -52,7 +52,7 @@ namespace EasyCalc.Tests
         }
 
         [Fact]
-        public void ParseFunctionBodyToPostfixFormXY()
+        public void ParseToPostfixForm_ParseSimpleSum_CreatePostfixForm()
         {
             var method = _composer.GetType().GetMethod("ParseToPostfixForm", BindingFlags.NonPublic | BindingFlags.Instance);
             var dividerField = _composer.GetType().GetField("_divider", BindingFlags.NonPublic | BindingFlags.Static);
@@ -67,7 +67,7 @@ namespace EasyCalc.Tests
         }
 
         [Fact]
-        public void CheckGettingFunctionName()
+        public void GetFunctionName_SimpleSignatureWithExtraSpaces_GetNameOfFunction()
         {
             var method = _composer.GetType().GetMethod("GetFunctionName", BindingFlags.NonPublic | BindingFlags.Instance);
             var expected = "func";
@@ -82,7 +82,7 @@ namespace EasyCalc.Tests
         [InlineData(2, 4)]
         [InlineData(2.4, 4.1)]
         [InlineData(5, 1)]
-        public void SumOfXY(double x, double y)
+        public void CreateFunction_SumOfXY_CreateAndCalculateSum(double x, double y)
         {
             var expected = x + y;
             var function = _composer.CreateFunction("f(x,y)", "x+y");
@@ -96,7 +96,7 @@ namespace EasyCalc.Tests
         [InlineData(2, 4, 1)]
         [InlineData(2.4, 4.1, 1)]
         [InlineData(5, 1, 1)]
-        public void FunctionWith3Variables(double x, double y, double z)
+        public void CreateFunction_With3Variables_CreateAndCalculateExpression(double x, double y, double z)
         {
             var expected = x + y - z;
             var function = _composer.CreateFunction("f(x,y,z)", "x+y-z");
@@ -110,7 +110,7 @@ namespace EasyCalc.Tests
         [InlineData(2, 4, 1)]
         [InlineData(2.4, 4.1, 1)]
         [InlineData(5, 1, 1)]
-        public void FunctionWith3VariablesAndConstant(double x, double y, double z)
+        public void CreateFunction_With3VariablesAndConstants_CreateAndCalculateExpression(double x, double y, double z)
         {
             const int value = 10;
             var expected = x + y - z + value;
@@ -125,7 +125,7 @@ namespace EasyCalc.Tests
         [Theory]
         [InlineData(12, 11, 1)]
         [InlineData(-12, 11, 1)]
-        public void FunctionWithBracketsAndConstants(double x, double y, double z)
+        public void CreateFunction_WithBrackets_CreateAndCalculateExpression(double x, double y, double z)
         {
             var expected = (x + 3) / (y + 5 * (3 - z));
             var function = _composer.CreateFunction("f(x,y,z)", $"(x + 3) / (y + 5 * (3 - 1))");
@@ -136,7 +136,7 @@ namespace EasyCalc.Tests
             Assert.Equal(expected, actual);
         }
         [Fact]
-        public void GetCreatedFunction()
+        public void GetFunction_GetFunctionFromComposerCollectionOfFunctions_GetAndCalculateExpression()
         {
             var method = _composer.CreateFunction("f(x,y)", $"x * x + y - 5");
             var savedMethod = _composer.GetFunction("f");
@@ -151,7 +151,7 @@ namespace EasyCalc.Tests
         }
 
         [Fact]
-        public void CreateFunctionWithNoParameters()
+        public void CreateFunction_NoParametersInSignature_CreateAndCalculateExpression()
         {
             var expected = 10;
             var function = _composer.CreateFunction("f()", $"(10 + 2 - (1 + 1))");
