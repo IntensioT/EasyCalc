@@ -52,5 +52,39 @@ namespace EasyCalc
             }
         }
 
+        private void ToggleVarsButton_Clicked(object sender, EventArgs e)
+        {
+            HiddenVarsList.IsVisible = !HiddenVarsList.IsVisible;
+
+            if (HiddenVarsList.IsVisible)
+            {
+                ToggleVarsButton.Text = "Vars<-";
+                MainGrid.ColumnDefinitions[2].Width = new GridLength(300, GridUnitType.Absolute);
+
+                // Увеличиваем размер окна
+#if WINDOWS
+                var window = Application.Current.Windows.OfType<Window>().FirstOrDefault();
+                if (window != null)
+                {
+                    window.Width = window.Width + 300;
+                }
+#endif
+            }
+            else
+            {
+                ToggleVarsButton.Text = "Vars->";
+                MainGrid.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Auto);
+
+                // Возвращаем прежний размер окна
+#if WINDOWS
+                var window = Application.Current.Windows.OfType<Window>().FirstOrDefault();
+                if (window != null)
+                {
+                    window.Width = window.Width - 300;
+                }
+#endif
+            }
+        }
+
     }
 }

@@ -93,10 +93,39 @@
                 </Grid>
             </Border>
         </DataTemplate>
+
+        <DataTemplate x:Key="EntryVarTemplate">
+            <Border
+                StrokeShape="RoundRectangle 25 25 25 25"
+                Stroke="Transparent"
+                BackgroundColor="{AppThemeBinding Light={StaticResource CustomLightBlue}, Dark={StaticResource CustomDarkGrey}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Entry Grid.Column="0"
+                    Text="{Binding Value}"
+                    FontSize="25" />
+                    <Button Grid.Column="1"
+                Text="-"
+                FontSize="20"
+                Style="{StaticResource SimpleTextStyle}"
+                BackgroundColor="Transparent"
+                BorderWidth="0"
+                CommandParameter="{Binding}"
+                Command="{Binding BindingContext.RemoveVarCommand, Source={x:Reference Name=mainPage}}"
+                VerticalOptions="Center"
+                Padding="10" 
+                    />
+                </Grid>
+            </Border>
+        </DataTemplate>
     </ContentPage.Resources>
 
 
-    <Grid x:Name="MainGrid" ColumnDefinitions="*, 0"
+    <Grid x:Name="MainGrid" ColumnDefinitions="*, 0, 0"
           RowDefinitions="200, *">
         <Border StrokeShape="RoundRectangle 0 0 25 25"
                 Stroke="Transparent"
@@ -119,10 +148,18 @@
               ColumnDefinitions="*,*,*,*">
 
             <Button x:Name="ToggleButton" 
+                    Grid.Column="0"
                     Grid.Row="0"
                     Text="Func->" 
                     Style="{StaticResource MiniButtonStyle}"
                     Clicked="ToggleButton_Clicked" />
+            
+            <Button x:Name="ToggleVarsButton" 
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Text="Vars->" 
+                    Style="{StaticResource MiniButtonStyle}"
+                    Clicked="ToggleVarsButton_Clicked" />
 
             <!--Row 1-->
             <Button Grid.Row="1"
@@ -260,6 +297,28 @@
                     Text="+" 
                     Style="{StaticResource MiniButtonStyle}"
                     Command="{Binding AddFuncCommand}" />
+        </StackLayout>
+
+        <StackLayout x:Name="HiddenVarsList" 
+             Grid.Column="2" 
+             Grid.RowSpan="2"
+             MinimumWidthRequest="300"
+             HorizontalOptions="Fill"
+             VerticalOptions="Fill"
+             IsVisible="False">
+            <Label  VerticalOptions="Center"
+            HorizontalOptions="Center"
+        Style="{StaticResource SimpleTextStyle}">
+                Variables
+            </Label>
+
+            <StackLayout BindableLayout.ItemsSource="{Binding Variables}"
+         BindableLayout.ItemTemplate="{StaticResource EntryVarTemplate}" />
+
+            <Button x:Name="AddVarButton" 
+            Text="+" 
+            Style="{StaticResource MiniButtonStyle}"
+            Command="{Binding AddVarCommand}" />
         </StackLayout>
 
 

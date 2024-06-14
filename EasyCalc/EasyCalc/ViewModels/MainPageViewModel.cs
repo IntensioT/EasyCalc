@@ -16,8 +16,14 @@ namespace EasyCalc
     public partial class MainPageViewModel : ObservableObject
     {
         public ObservableCollection<FunctionUI> Functions { get; } = new ObservableCollection<FunctionUI>();
+        public ObservableCollection<VariableUI> Variables { get; } = new ObservableCollection<VariableUI>();
 
         public ICommand AddFuncCommand { get; }
+        public ICommand RemoveFuncCommand { get; }
+
+        public ICommand AddVarCommand { get; }
+        public ICommand RemoveVarCommand { get; }
+
 
         [ObservableProperty]
         private string _expressionDisplay = string.Empty;
@@ -78,6 +84,12 @@ namespace EasyCalc
                     functionValues[$"func{i + 1}"] = Functions[i].Value;
                 }
 
+                Dictionary<string, string> variableValues = new Dictionary<string, string>();
+                for (int i = 0; i < Variables.Count; i++)
+                {
+                    functionValues[$"var{i + 1}"] = Variables[i].Value;
+                }
+
                 foreach (var functionValue in functionValues)
                 {
                     ExpressionDisplay = ExpressionDisplay.Replace(functionValue.Key, functionValue.Value);
@@ -97,6 +109,9 @@ namespace EasyCalc
         {
             AddFuncCommand = new Command(AddFunc);
             RemoveFuncCommand = new Command<FunctionUI>(RemoveFunc);
+
+            AddVarCommand = new Command(AddVar);
+            RemoveVarCommand = new Command<VariableUI>(RemoveVar);
         }
 
         private void AddFunc()
@@ -104,12 +119,20 @@ namespace EasyCalc
             Functions.Add(new FunctionUI());
         }
 
-        public ICommand RemoveFuncCommand { get; }
-
-
         private void RemoveFunc(FunctionUI function)
         {
             Functions.Remove(function);
+        }
+
+
+        private void AddVar()
+        {
+            Variables.Add(new VariableUI());
+        }
+
+        private void RemoveVar(VariableUI variable)
+        {
+            Variables.Remove(variable);
         }
     }
 }
