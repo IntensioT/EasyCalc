@@ -6,7 +6,7 @@ namespace FunctionComposeLibrary
 {
     public class FunctionComposer
     {
-        Dictionary<string, LambdaExpression> _functions = new();
+        Dictionary<string, Delegate> _functions = new();
 
         private Dictionary<char, Operation> operationsDictionary = new()
         {
@@ -18,27 +18,32 @@ namespace FunctionComposeLibrary
             [')'] = new Operation(null, 10),
         };
         IEnumerable<char> operations => operationsDictionary.Keys;
-
         const char _divider = ',';
+
+        public Delegate? GetFunction(string name)
+        {
+            _functions.TryGetValue(GetFunctionName(name), out var result);
+            return result;
+        }
 
         public Delegate? CreateFunction(string signature, string body)
         {
             var name = GetFunctionName(signature);
+            var result = GetFunction(name);
+            if (result != null)
+                return result;
+
             string[] parameters = GetSignatureParameters(signature);
-            var parametersExpression = new Dictionary<string, ParameterExpression>();
-            foreach (var p in parameters)
-                parametersExpression.Add(p, Expression.Parameter(typeof(double), p));
+            var args = Expression.Parameter(typeof(double[]), "args");
 
             body = ParseToPostfixForm(body);
             var stack = new Stack<Expression>();
-            Expression left, right;
-            var param = new List<Expression>();
             for (int i = 0; i < body.Length; i++)
             {
                 if (operations.Contains(body[i]))
                 {
-                    right = stack.Pop();
-                    left = stack.Pop();
+                    var right = stack.Pop();
+                    var left = stack.Pop();
                     if (operationsDictionary.TryGetValue(body[i], out var operation))
                     {
                         if (operation.ExpressionHandler != null)
@@ -54,7 +59,9 @@ namespace FunctionComposeLibrary
                     }
                     else if (parameters.Contains(strVariable))
                     {
-                        stack.Push(parametersExpression[strVariable]);
+                        int ind = 0;
+                        while (parameters[ind] != strVariable) ind++;
+                        stack.Push(Expression.ArrayIndex(args, Expression.Constant(ind)));
                     }
                     else
                     {
@@ -64,9 +71,10 @@ namespace FunctionComposeLibrary
 
                 }
             }
-            var result = Expression.Lambda(stack.Pop(), parametersExpression.Values);
+
+            result = Expression.Lambda(stack.Pop(), args).Compile();
             _functions.Add(name, result);
-            return result.Compile();
+            return result;
         }
 
         private string ReadVariableLiteral(string expression, ref int ind)
@@ -77,7 +85,7 @@ namespace FunctionComposeLibrary
                 result += expression[ind];
                 ind++;
             }
-            //decrease ind if we go to next lexema, outer method has to increase itself
+            //decrease ind if we go to next lexema, outer method has to increase it by itself
             if (ind < expression.Length && expression[ind] != _divider)
                 ind--;
             return result;
@@ -132,7 +140,10 @@ namespace FunctionComposeLibrary
         private string GetFunctionName(string signature)
         {
             signature = signature.Replace(" ", "");
-            return signature.Substring(0, signature.IndexOf("("));
+            var length = signature.IndexOf("(");
+            return length > 0 
+                ? signature.Substring(0, signature.IndexOf("(")) 
+                : signature;
         }
     }
 }

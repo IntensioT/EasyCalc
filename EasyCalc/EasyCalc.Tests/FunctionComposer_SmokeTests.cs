@@ -87,7 +87,7 @@ namespace EasyCalc.Tests
             var expected = x + y;
             var function = _composer.CreateFunction("f(x,y)", "x+y");
 
-            var actual = function?.DynamicInvoke(x, y);
+            var actual = function?.DynamicInvoke(new double[] { x, y });
 
             Assert.NotNull(function);
             Assert.Equal(expected, actual);
@@ -101,7 +101,7 @@ namespace EasyCalc.Tests
             var expected = x + y - z;
             var function = _composer.CreateFunction("f(x,y,z)", "x+y-z");
 
-            var actual = function?.DynamicInvoke(x, y, z);
+            var actual = function?.DynamicInvoke(new double[] { x, y, z });
 
             Assert.NotNull(function);
             Assert.Equal(expected, actual);
@@ -116,7 +116,7 @@ namespace EasyCalc.Tests
             var expected = x + y - z + value;
             var function = _composer.CreateFunction("f(x,y,z)", $"x+y-z + {value}");
 
-            var actual = function?.DynamicInvoke(x, y, z);
+            var actual = function?.DynamicInvoke(new double[] { x, y, z });
 
             Assert.NotNull(function);
             Assert.Equal(expected, actual);
@@ -130,12 +130,37 @@ namespace EasyCalc.Tests
             var expected = (x + 3) / (y + 5 * (3 - z));
             var function = _composer.CreateFunction("f(x,y,z)", $"(x + 3) / (y + 5 * (3 - 1))");
 
-            var actual = function?.DynamicInvoke(x, y, z);
+            var actual = function?.DynamicInvoke(new double[] { x, y, z });
 
             Assert.NotNull(function);
             Assert.Equal(expected, actual);
         }
+        [Fact]
+        public void GetCreatedFunction()
+        {
+            var method = _composer.CreateFunction("f(x,y)", $"x * x + y - 5");
+            var savedMethod = _composer.GetFunction("f");
+            int x = 2, y = 3;
+            double expected = x * x + y - 5;
 
+            var actual = savedMethod?.DynamicInvoke(new double[] { x, y });
 
+            Assert.NotNull(method);
+            Assert.NotNull(savedMethod);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void CreateFunctionAndSendArrayOfParamsToDynamicInvoke()
+        {
+            var parameters = new List<double> { 1, 2, 3 };
+            var expected = (parameters[0] + 3) / (parameters[1] + 5 * (3 - parameters[2]));
+            var function = _composer.CreateFunction("f(x,y,z)", $"(x + 3) / (y + 5 * (3 - z))");
+
+            var actual = function?.DynamicInvoke(parameters.ToArray());
+
+            Assert.NotNull(function);
+            Assert.Equal(expected, actual);
+        }
     }
 }
