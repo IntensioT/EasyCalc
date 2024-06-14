@@ -1,4 +1,4 @@
-﻿using EasyCalc.Exceptions;
+﻿using FunctionComposeLibrary.Exceptions;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -26,8 +26,21 @@ namespace FunctionComposeLibrary
             if (function == null)
                 return 0;
 
-            var result = function.DynamicInvoke(args);
-            return result != null ? (double)result : 0;
+            var result = 0d;
+            try
+            {
+                var functionResult = function.DynamicInvoke(args);
+                result = functionResult != null ? (double)functionResult : 0;
+            }
+            catch (DivideByZeroException ex)
+            {
+                throw new FunctionComposerException($"Attempt to divide by zero in function: {name}", ex);
+            }
+            catch
+            {
+                throw new FunctionComposerException($"Unable to run funciton: {name}. Try to check its body and your params one more time");
+            }
+            return result;
         }
 
         public Delegate? GetFunction(string name)
@@ -76,9 +89,8 @@ namespace FunctionComposeLibrary
                     else
                     {
                         if (strVariable != "")
-                            throw new InvalidOperationException($"Unable to find lexem: {strVariable}");
+                            throw new FunctionComposerException($"Unable to find lexem: {strVariable}");
                     }
-
                 }
             }
 

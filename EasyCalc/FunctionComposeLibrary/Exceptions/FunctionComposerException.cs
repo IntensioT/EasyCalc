@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EasyCalc.Exceptions
+namespace FunctionComposeLibrary.Exceptions
 {
-    internal class FunctionComposerException : Exception
+    public class FunctionComposerException : Exception
     {
-        internal FunctionComposerException() { }
-        internal FunctionComposerException(string message) 
+        public FunctionComposerException() { }
+        public FunctionComposerException(string message) 
             : base(message) { }
-        internal FunctionComposerException(string message, Exception e) 
+        public FunctionComposerException(string message, Exception e) 
             : base(message, e) { }
     }
 }
