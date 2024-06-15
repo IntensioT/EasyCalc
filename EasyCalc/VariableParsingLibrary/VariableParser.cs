@@ -1,5 +1,8 @@
 using System.Globalization;
+using System.Xml.Schema;
+using VariableParsingLibrary.Exceptions;
 using VariableParsingLibrary.Tools;
+using Validator = System.ComponentModel.DataAnnotations.Validator;
 
 namespace VariableParsingLibrary;
 
@@ -11,7 +14,8 @@ public class VariableParser
 
     private Tokenizer _tokenizer = new Tokenizer();
     private InfixToPostfixConverter _infixToPostfixConverter = new InfixToPostfixConverter();
-
+    private VariableValidator _validator = new VariableValidator();
+    
     public VariableParser(List<string> variableDeclarations)
     {
         foreach (var line in variableDeclarations)
@@ -19,13 +23,17 @@ public class VariableParser
             var parts = line.Split('=');
             if (parts.Length != 2)
             {
-                //TODO: Add an error return
+                throw new VariableParserException($"Invalid input line: {line}");
             }
 
             var variable = parts[0].Trim();
+            _validator.ValidateVariableName(variable);
             var expression = parts[1].Trim();
+            
             _variableExpressions[variable] = expression;
         }
+        
+        _validator.ValidateExpressions(_variableExpressions);
     }
     
     public double GetVariableValue(string variable)
@@ -34,7 +42,7 @@ public class VariableParser
         {
             if (_evaluating.Contains(variable))
             {
-                //TODO: Add an error return
+                throw new VariableParserException($"Circular dependency detected for variable {variable}");
             }
 
             _evaluating.Add(variable);
@@ -81,8 +89,8 @@ public class VariableParser
                     "+" => left + right,
                     "-" => left - right,
                     "*" => left * right,
-                    "/" => left / right
-                    //TODO: Add an error return
+                    "/" => left / right,
+                    _ => throw new VariableParserException($"Unexpected operator: {token}")
                 };
                 
                 stack.Push(result);
