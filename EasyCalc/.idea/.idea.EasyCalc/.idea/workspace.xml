@@ -10,12 +10,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eedfc521-2b15-46c6-848e-da6b65c61792" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/VariableParsingLibrary/Exceptions/VariableParserException.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/VariableParsingLibrary/Tools/VariableValidator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCalc/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCalc/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/VariableParsingLibrary/VariableParser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/VariableParsingLibrary/VariableParser.cs" afterDir="false" />
-    </list>
+    <list default="true" id="eedfc521-2b15-46c6-848e-da6b65c61792" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -104,7 +99,7 @@
       <updated>1718298450252</updated>
       <workItem from="1718298451762" duration="4192000" />
       <workItem from="1718436511722" duration="815000" />
-      <workItem from="1718448726834" duration="3958000" />
+      <workItem from="1718448726834" duration="5617000" />
     </task>
     <servers />
   </component>
