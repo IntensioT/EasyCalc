@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCalc.Tests", "EasyCalc.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionComposeLibrary", "FunctionComposeLibrary\FunctionComposeLibrary.csproj", "{6A605255-5756-4C93-B88D-DA49D7D0C198}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionParser", "ExpressionParser\ExpressionParser.csproj", "{8E2A0503-CA55-402A-BBD4-05612DC53F16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{6A605255-5756-4C93-B88D-DA49D7D0C198}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A605255-5756-4C93-B88D-DA49D7D0C198}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A605255-5756-4C93-B88D-DA49D7D0C198}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E2A0503-CA55-402A-BBD4-05612DC53F16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E2A0503-CA55-402A-BBD4-05612DC53F16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E2A0503-CA55-402A-BBD4-05612DC53F16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E2A0503-CA55-402A-BBD4-05612DC53F16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
