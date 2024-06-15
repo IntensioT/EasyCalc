@@ -15,6 +15,9 @@ namespace EasyCalc
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<MainPageViewModel>();
+
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
