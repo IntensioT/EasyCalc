@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FunctionComposeLibrary\FunctionComposeLibrary.csproj" />
+    <ProjectReference Include="..\VariableParsingLibrary\VariableParsingLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>
