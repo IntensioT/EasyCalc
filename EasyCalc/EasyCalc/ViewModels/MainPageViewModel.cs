@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ExpressionParser;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EasyCalc
@@ -94,8 +95,23 @@ namespace EasyCalc
                 {
                     ExpressionDisplay = ExpressionDisplay.Replace(functionValue.Key, functionValue.Value);
                 }
+                
+                List<string> functions = new List<string>();
+                
+                for (int i = 0; i < Functions.Count; i++)
+                {
+                    functions.Add(Functions[i].Value); 
+                }
+                
+                List<string> variables = new List<string>();
+                
+                for (int i = 0; i < Variables.Count; i++)
+                {
+                    variables.Add(Variables[i].Value); 
+                }
 
-                double result = Convert.ToDouble(new DataTable().Compute(ExpressionDisplay, null));
+                var expressionHandler = new ExpressionHandler(variables, functions);
+                var result = expressionHandler.EvaluateExpression(ExpressionDisplay);
                 ResultDisplay = result.ToString();
             }
             catch
