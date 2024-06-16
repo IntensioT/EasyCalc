@@ -1,6 +1,12 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Globalization;
+using System.Linq;
 using ExpressionParser.Exceptions;
 using FunctionComposeLibrary;
+using Jace;
+using VariableParsingLibrary;
 
 namespace ExpressionParser
 {
@@ -9,43 +15,38 @@ namespace ExpressionParser
         private readonly FunctionComposer _functionComposer;
         private readonly VariableParser _variableParser;
         private readonly List<string> _functionNames;
+        private readonly Dictionary<string, List<string>> _variableExpressions;
+        private CalculationEngine _calculationEngine;
 
-        public ExpressionHandler(FunctionComposer functionComposer, VariableParser variableParser)
+        public ExpressionHandler(List<string> variableDeclarations, List<string> functionDeclarations)
         {
-            _functionComposer = functionComposer;
-            _variableParser = variableParser;
+            _variableParser = new VariableParser(variableDeclarations);
+            _variableExpressions = variableDeclarations
+                .Select(line => line.Split('='))
+                .GroupBy(parts => parts[0].Trim())
+                .ToDictionary(group => group.Key, group => group.Select(parts => parts[1].Trim()).ToList());
+
+            _functionComposer = new FunctionComposer();
             _functionNames = new List<string>();
+            _calculationEngine = new CalculationEngine();
+            ParseFunctions(functionDeclarations);
         }
 
-        public double EvaluateExpression(string expression, List<string> variablesList, List<string> functionsList)
+        public double EvaluateExpression(string expression)
         {
-            // Парсинг переменных и функций
-            ParseVariables(variablesList);
-            ParseFunctions(functionsList);
-
             // Замена переменных и функций в выражении
             string parsedExpression = SubstituteVariablesAndFunctions(expression);
-
+    
             // Вычисление выражения
             double result = Evaluate(parsedExpression);
 
-            return result;
-        }
-
-        private void ParseVariables(List<string> variablesList)
-        {
-            foreach (var line in variablesList)
+            // Проверка на бесконечность результата
+            if (double.IsInfinity(result))
             {
-                var parts = line.Split('=');
-                if (parts.Length != 2)
-                {
-                    throw new OperationException($"Invalid input line: {line}");
-                }
-
-                var variable = parts[0].Trim();
-                var expression = parts[1].Trim();
-                _variableParser.SetVariable(variable, expression);
+                throw new EvaluationException("Результат выражения является бесконечностью");
             }
+
+            return result;
         }
 
         private void ParseFunctions(List<string> functionsList)
@@ -62,7 +63,7 @@ namespace ExpressionParser
                 var body = parts[1].Trim();
 
                 _functionComposer.CreateFunction(signature, body);
-                var functionName = _functionComposer.GetFunctionName(signature);
+                var functionName = ExtractFunctionName(signature);
                 _functionNames.Add(functionName);
             }
         }
@@ -70,9 +71,10 @@ namespace ExpressionParser
         private string SubstituteVariablesAndFunctions(string expression)
         {
             // Замена переменных на их значения
-            foreach (var variable in _variableParser.GetAllVariables())
+            foreach (var variable in _variableExpressions.Keys)
             {
-                expression = expression.Replace(variable.Key, variable.Value.ToString());
+                var value = _variableParser.GetVariableValue(variable);
+                expression = ReplaceWholeWord(expression, variable, value.ToString(CultureInfo.InvariantCulture));
             }
 
             // Замена функций на их результаты
@@ -80,23 +82,98 @@ namespace ExpressionParser
             {
                 while (expression.Contains(functionName + "(", StringComparison.InvariantCulture))
                 {
-                    var startIndex = expression.IndexOf(functionName + "(", StringComparison.InvariantCulture);
-                    var endIndex = expression.IndexOf(')', startIndex);
-                    var argsString = expression.Substring(startIndex + functionName.Length + 1, endIndex - startIndex - functionName.Length - 1);
-                    var args = argsString.Split(',').Select(arg => Evaluate(arg.Trim())).ToArray();
+                    int startIndex = expression.IndexOf(functionName + "(", StringComparison.InvariantCulture);
+                    int endIndex = FindClosingParenthesis(expression, startIndex + functionName.Length + 1);
+                    string argsString = expression.Substring(startIndex + functionName.Length + 1, endIndex - startIndex - functionName.Length - 1);
+                    string[] args = SplitArguments(argsString);
 
-                    var functionResult = _functionComposer.CallFunction(functionName, args);
-                    expression = expression.Substring(0, startIndex) + functionResult.ToString() + expression.Substring(endIndex + 1);
+                    // Вычисляем аргументы функции
+                    double[] evaluatedArgs = new double[args.Length];
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        evaluatedArgs[i] = Evaluate(args[i].Trim());
+                    }
+
+                    // Вызываем функцию и заменяем ее результат в выражении
+                    double functionResult = _functionComposer.CallFunction(functionName, evaluatedArgs);
+                    expression = expression.Substring(0, startIndex) + functionResult.ToString(CultureInfo.InvariantCulture) + expression.Substring(endIndex + 1);
                 }
             }
 
             return expression;
         }
 
+        private int FindClosingParenthesis(string expression, int startIndex)
+        {
+            int depth = 0;
+            for (int i = startIndex; i < expression.Length; i++)
+            {
+                if (expression[i] == '(') depth++;
+                else if (expression[i] == ')')
+                {
+                    if (depth == 0) return i;
+                    depth--;
+                }
+            }
+
+            throw new OperationException("Unmatched parenthesis in expression.");
+        }
+
         private double Evaluate(string expression)
         {
-            DataTable table = new DataTable();
-            return Convert.ToDouble(table.Compute(expression, string.Empty));
+            try
+            {
+                // Вычисление выражения с помощью DataTable.Compute
+                var dataTable = new DataTable();
+                var value = dataTable.Compute(expression, string.Empty);
+
+                // Преобразование результата в double
+                return Convert.ToDouble(value);
+            }
+            catch (Exception ex) when (ex is InvalidExpressionException || ex is DivideByZeroException)
+            {
+                throw new EvaluationException($"Ошибка при оценке выражения '{expression}'", ex);
+            }
+        }
+
+
+
+        private string ExtractFunctionName(string signature)
+        {
+            signature = signature.Replace(" ", "");
+            int length = signature.IndexOf("(");
+            return length > 0
+                ? signature.Substring(0, signature.IndexOf("("))
+                : signature;
+        }
+
+        private string[] SplitArguments(string argsString)
+        {
+            List<string> arguments = new List<string>();
+            int depth = 0;
+            int startIndex = 0;
+
+            for (int i = 0; i < argsString.Length; i++)
+            {
+                if (argsString[i] == '(') depth++;
+                else if (argsString[i] == ')') depth--;
+
+                if (depth == 0 && argsString[i] == ',')
+                {
+                    arguments.Add(argsString.Substring(startIndex, i - startIndex));
+                    startIndex = i + 1;
+                }
+            }
+
+            arguments.Add(argsString.Substring(startIndex));
+
+            return arguments.ToArray();
+        }
+
+        private string ReplaceWholeWord(string originalString, string wordToFind, string replacement)
+        {
+            string pattern = @"\b" + wordToFind + @"\b";
+            return System.Text.RegularExpressions.Regex.Replace(originalString, pattern, replacement);
         }
     }
 }
