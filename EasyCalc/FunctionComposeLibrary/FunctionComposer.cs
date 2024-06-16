@@ -17,6 +17,7 @@ namespace FunctionComposeLibrary
             ['/'] = new Operation(Expression.Divide, 2),
             [')'] = new Operation(null, 10),
         };
+
         IEnumerable<char> operations => operationsDictionary.Keys;
         const char _divider = ',';
 
@@ -95,6 +96,7 @@ namespace FunctionComposeLibrary
                 result += expression[ind];
                 ind++;
             }
+
             //decrease ind if we go to next lexema, outer method has to increase it by itself
             if (ind < expression.Length && expression[ind] != _divider)
                 ind--;
@@ -119,7 +121,8 @@ namespace FunctionComposeLibrary
                 }
                 else if (operations.Contains(body[i]))
                 {
-                    while (stack.Count > 0 && operationsDictionary[stack.Peek()].Priority >= operationsDictionary[body[i]].Priority)
+                    while (stack.Count > 0 && operationsDictionary[stack.Peek()].Priority >=
+                           operationsDictionary[body[i]].Priority)
                         output.Append(stack.Pop());
                     stack.Push(body[i]);
                 }
@@ -129,6 +132,7 @@ namespace FunctionComposeLibrary
                     output.Append(strNumber + _divider);
                 }
             }
+
             while (stack.Count > 0)
                 output.Append(stack.Pop());
             return output.ToString();

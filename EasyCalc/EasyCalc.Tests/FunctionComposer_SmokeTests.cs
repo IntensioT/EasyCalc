@@ -161,5 +161,6 @@ namespace EasyCalc.Tests
             Assert.NotNull(function);
             Assert.Equal(expected, actual);
         }
+        
     }
 }
