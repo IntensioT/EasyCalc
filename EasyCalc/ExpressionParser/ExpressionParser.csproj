@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FunctionComposeLibrary\FunctionComposeLibrary.csproj" />
+      <ProjectReference Include="..\VariableParsingLibrary\VariableParsingLibrary.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Bing.Utils" Version="1.4.0" />
+      <PackageReference Include="Jace" Version="1.0.0" />
+      <PackageReference Include="MathNet.Symbolics" Version="0.25.0" />
+    </ItemGroup>
+
+</Project>
