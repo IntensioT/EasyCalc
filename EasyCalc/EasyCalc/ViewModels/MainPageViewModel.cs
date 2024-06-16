@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ExpressionParser;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using VariableParsingLibrary.Exceptions;
 
 namespace EasyCalc
 {
@@ -24,6 +25,8 @@ namespace EasyCalc
 
         public ICommand AddVarCommand { get; }
         public ICommand RemoveVarCommand { get; }
+
+        private int OpenParenthesesCount = 0;
 
 
         [ObservableProperty]
@@ -47,11 +50,41 @@ namespace EasyCalc
                 EvaluateExpression();
             }
 
-            else if (int.TryParse(buttonText, out var _) || buttonText == "%" || buttonText == ".")
+            //else if (int.TryParse(buttonText, out var _) || buttonText == "%" || buttonText == ".")
+            //{
+            //    var ch = buttonText[0];
+            //    ExpressionDisplay += ch;
+            //}
+            else if (int.TryParse(buttonText, out var _) || buttonText == "%" || buttonText == "." || buttonText == "(" || buttonText == ")")
             {
                 var ch = buttonText[0];
-                ExpressionDisplay += ch;
+                if (ch == '(')
+                {
+                    // Обработка открывающей скобки
+                    ExpressionDisplay += ch;
+                    OpenParenthesesCount++;
+                }
+                else if (ch == ')')
+                {
+                    // Обработка закрывающей скобки
+                    if (OpenParenthesesCount > 0)
+                    {
+                        ExpressionDisplay += ch;
+                        OpenParenthesesCount--;
+                    }
+                    else
+                    {
+                        DisplayMessage("Error", "Too many closing parentheses.", "ok");
+                        //ResultDisplay = "Too many closing parentheses.";
+                    }
+                }
+                else
+                {
+                    // Обработка других символов
+                    ExpressionDisplay += ch;
+                }
             }
+
             else if (buttonText == "DEL")
             {
                 if (!string.IsNullOrEmpty(ExpressionDisplay))
@@ -83,42 +116,49 @@ namespace EasyCalc
                 for (int i = 0; i < Functions.Count; i++)
                 {
                     functionValues[$"func{i + 1}"] = Functions[i].Value;
+
                 }
 
                 Dictionary<string, string> variableValues = new Dictionary<string, string>();
                 for (int i = 0; i < Variables.Count; i++)
                 {
-                    functionValues[$"var{i + 1}"] = Variables[i].Value;
+                    variableValues[$"var{i + 1}"] = Variables[i].Value;
+                    //Variables[i].Value = ReplaceEqualsOrMinusWithZero(Variables[i].Value);
                 }
 
                 foreach (var functionValue in functionValues)
                 {
                     ExpressionDisplay = ExpressionDisplay.Replace(functionValue.Key, functionValue.Value);
                 }
-                
+
                 List<string> functions = new List<string>();
-                
+
                 for (int i = 0; i < Functions.Count; i++)
                 {
-                    functions.Add(Functions[i].Value); 
+                    functions.Add(ReplaceEqualsOrMinusWithZero(Functions[i].Value));
+                    //functions.Add(Functions[i].Value);
                 }
-                
+
                 List<string> variables = new List<string>();
-                
+
                 for (int i = 0; i < Variables.Count; i++)
                 {
-                    variables.Add(Variables[i].Value); 
+                    variables.Add(ReplaceEqualsOrMinusWithZero(Variables[i].Value));
+                    //variables.Add(Variables[i].Value);
                 }
 
                 var expressionHandler = new ExpressionHandler(variables, functions);
                 var result = expressionHandler.EvaluateExpression(ExpressionDisplay);
                 ResultDisplay = result.ToString();
             }
-            catch
+            catch (Exception ex)
             {
-                ResultDisplay = "Format error";
+                DisplayMessage("Error", ex.Message, "ok");
+                ResultDisplay = "Error";
+                //ResultDisplay = ex.Message;
                 return;
             }
+
         }
 
         public MainPageViewModel()
@@ -149,6 +189,24 @@ namespace EasyCalc
         private void RemoveVar(VariableUI variable)
         {
             Variables.Remove(variable);
+        }
+
+        public string ReplaceEqualsOrMinusWithZero(string input)
+        {
+            if (input.Contains("=-") || input.Contains("(-"))
+            {
+                return input.Replace("=-", "=0-").Replace("(-", "(0-");
+            }
+            else
+            {
+                return input;
+            }
+        }
+
+
+        async void DisplayMessage(string title, string message, string cancel)
+        {
+            await Application.Current.MainPage.DisplayAlert(title, message, cancel);
         }
     }
 }

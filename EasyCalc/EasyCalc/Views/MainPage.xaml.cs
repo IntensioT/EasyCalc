@@ -24,6 +24,7 @@ namespace EasyCalc
 
             if (HiddenList.IsVisible)
             {
+                //var window = sender as Window;
                 ToggleButton.Text = "Func<-";
                 MainGrid.ColumnDefinitions[1].Width = new GridLength(300, GridUnitType.Absolute);
 
@@ -32,7 +33,12 @@ namespace EasyCalc
                 var window = Application.Current.Windows.OfType<Window>().FirstOrDefault();
                 if (window != null)
                 {
-                    window.Width = window.Width + 300;
+                    window.MinimumWidth = window.MinimumWidth + 300;
+                    //window.Width = window.Width;
+
+                    var disp = DeviceDisplay.Current.MainDisplayInfo;
+                    window.X = (disp.Width / disp.Density - window.Width) / 2;
+                    window.Y = (disp.Height / disp.Density - window.Height) / 2;
                 }
 #endif
             }
@@ -46,7 +52,12 @@ namespace EasyCalc
                 var window = Application.Current.Windows.OfType<Window>().FirstOrDefault();
                 if (window != null)
                 {
+                    window.MinimumWidth = window.MinimumWidth - 300;
                     window.Width = window.Width - 300;
+                    
+                    var disp = DeviceDisplay.Current.MainDisplayInfo;
+                    window.X = (disp.Width / disp.Density - window.Width) / 2;
+                    window.Y = (disp.Height / disp.Density - window.Height) / 2;
                 }
 #endif
             }
@@ -66,7 +77,12 @@ namespace EasyCalc
                 var window = Application.Current.Windows.OfType<Window>().FirstOrDefault();
                 if (window != null)
                 {
-                    window.Width = window.Width + 300;
+                    window.MinimumWidth = window.MinimumWidth + 300;
+                    //window.Width = window.Width;
+                    
+                    var disp = DeviceDisplay.Current.MainDisplayInfo;
+                    window.X = (disp.Width / disp.Density - window.Width) / 2;
+                    window.Y = (disp.Height / disp.Density - window.Height) / 2;
                 }
 #endif
             }
@@ -80,8 +96,15 @@ namespace EasyCalc
                 var window = Application.Current.Windows.OfType<Window>().FirstOrDefault();
                 if (window != null)
                 {
+                    window.MinimumWidth = window.MinimumWidth - 300;
                     window.Width = window.Width - 300;
-                }
+                    
+                    var disp = DeviceDisplay.Current.MainDisplayInfo;
+                    window.X = (disp.Width / disp.Density - window.Width) / 2;
+                    window.Y = (disp.Height / disp.Density - window.Height) / 2;
+
+                } 
+                // TODO: negative expr handler
 #endif
             }
         }

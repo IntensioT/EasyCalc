@@ -127,7 +127,8 @@
 
     <Grid x:Name="MainGrid" ColumnDefinitions="*, 0, 0"
           RowDefinitions="200, *">
-        <Border StrokeShape="RoundRectangle 0 0 25 25"
+        <Border Grid.Column="0"
+                StrokeShape="RoundRectangle 0 0 25 25"
                 Stroke="Transparent"
                 BackgroundColor="{AppThemeBinding Light={StaticResource CustomLightBlue}, Dark={StaticResource CustomDarkGrey}}">
 
@@ -142,7 +143,8 @@
             </VerticalStackLayout>
         </Border>
 
-        <Grid Grid.Row="1"
+        <Grid Grid.Column="0"
+              Grid.Row="1"
               Padding="12"
               RowDefinitions="Auto,*,*,*,*,*"
               ColumnDefinitions="*,*,*,*">
@@ -171,12 +173,12 @@
             <Button Grid.Row="1"
                     Grid.Column="1"
                     Style="{StaticResource OperatorButtonStyle}"
-                    Text="(  )"/>
+                    Text="("/>
 
             <Button Grid.Row="1"
                     Grid.Column="2"
                     Style="{StaticResource OperatorButtonStyle}"
-                    Text="%"/>
+                    Text=")"/>
 
             <Button Grid.Row="1"
                     Grid.Column="3"
@@ -321,7 +323,7 @@
             Command="{Binding AddVarCommand}" />
         </StackLayout>
 
-
+        
     </Grid>
 
 </ContentPage>
